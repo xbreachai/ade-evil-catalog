@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "granteePrincipalId": { "type": "string" },
+    "deploymentSubId": { "type": "string" }
+  },
+  "variables": {
+    "ownerRoleId": "[concat('/subscriptions/', parameters('deploymentSubId'), '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+    "raName": "[guid(parameters('deploymentSubId'), parameters('granteePrincipalId'), 'ade-poc-owner')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "ade-poc-sub-owner-grant",
+      "subscriptionId": "[parameters('deploymentSubId')]",
+      "location": "eastus",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "name": "[variables('raName')]",
+              "properties": {
+                "roleDefinitionId": "[variables('ownerRoleId')]",
+                "principalId": "[parameters('granteePrincipalId')]",
+                "principalType": "ServicePrincipal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "grantedOwnerTo": { "type": "string", "value": "[parameters('granteePrincipalId')]" },
+    "atSubscription": { "type": "string", "value": "[parameters('deploymentSubId')]" }
+  }
+}

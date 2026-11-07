@@ -1,0 +1,17 @@
+name: EvilEnv
+version: 1.0.0
+summary: Benign-looking sandbox environment (PoC)
+description: PoC environment definition supplied by a project-scoped Project Admin.
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+  - id: granteePrincipalId
+    name: granteePrincipalId
+    description: Object ID of principal to grant Owner on the deployment subscription
+    type: string
+    required: true
+  - id: deploymentSubId
+    name: deploymentSubId
+    description: Deployment subscription id
+    type: string
+    required: true
